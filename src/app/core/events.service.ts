@@ -21,6 +21,13 @@ export class EventsService {
     });
   }
 
+  getEventResource(id: Signal<string>) {
+    return httpResource<DevFestEvent>(() => {
+      const eventId = id();
+      return `${this.apiUrl}/${eventId}`;
+    });
+  }
+
   // 2. Delete an event
   // We return an Observable (classic pattern) for the component to subscribe to.
   deleteEvent(id: string): Observable<void> {
