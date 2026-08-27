@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-search-bar',
   imports: [FormsModule],
-  imports: [FormsModule],
   template: `
     <div class="relative mb-6">
       <input

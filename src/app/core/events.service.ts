@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class EventsService {
-  private http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
   private apiUrl = 'http://localhost:3000/events';
 
   // 1. Define the Resource Factory
