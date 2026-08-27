@@ -24,14 +24,16 @@ import { Component, computed, input, linkedSignal, output } from '@angular/core'
             {{ (date() | date: 'mediumDate') || 'TBA' }}
           </p>
 
-          <!-- The Badge -->
+          <!-- TODO Mod 1: Add daysUntil() using @let -->
           @let days = daysUntil();
-          @if (days !== null) {
+          @if (days != null) {
             <div
               class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm"
             >
               @if (days > 0) {
                 In {{ days }} Days
+              } @else if (days < 0) {
+                Pass event
               } @else {
                 Happening Now!
               }
@@ -40,17 +42,16 @@ import { Component, computed, input, linkedSignal, output } from '@angular/core'
         </div>
 
         <!-- TODO Mod 1: Add Title Input -->
-        <h3 class="text-xl font-bold text-gray-800 my-2">
-          {{ title() }}
-        </h3>
+        <h3 class="text-xl font-bold text-gray-800 my-2">{{ title() }}</h3>
 
         <div class="flex justify-between items-center mt-4">
+          <!-- TODO Mod 1: Add Derived State (Like Button) -->
           <button
             (click)="toggleFavorite()"
             [class.text-red-500]="isFavorite()"
             class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
           >
-            {{ isFavorite() ? '♥' : '♡' }} Like
+            <span>{{ isFavorite() ? '♥' : '♡' }}</span> Like
           </button>
 
           <!-- TODO Mod 1: Add Output -->
@@ -70,12 +71,22 @@ import { Component, computed, input, linkedSignal, output } from '@angular/core'
   `,
 })
 export class EventCard {
-  title = input.required<string>();
+  // TODO Mod 1: Implement input(), output(), and model()
   image = input.required<string>();
-  date = input<string>(); // Optional, returns Signal<string | undefined>
-  delete = output<void>();
-
+  title = input.required<string>();
+  date = input<string>();
   initialLike = input(false);
+
+  delete = output();
+
+  removeEvent() {
+    this.delete.emit();
+  }
+
+  isFavorite = linkedSignal(() => this.initialLike());
+  toggleFavorite() {
+    this.isFavorite.update((val) => !val);
+  }
 
   daysUntil = computed(() => {
     const eventDate = this.date();
@@ -88,16 +99,4 @@ export class EventCard {
 
     return diffDays;
   });
-
-  // 2. State that defaults to the input value, but can change
-  isFavorite = linkedSignal(() => this.initialLike());
-
-  toggleFavorite() {
-    // 3. Update the signal based on previous value
-    this.isFavorite.update((val) => !val);
-  }
-
-  removeEvent() {
-    this.delete.emit();
-  }
 }
