@@ -2,6 +2,7 @@ import { Component, inject, input } from '@angular/core';
 import { EventsService } from '../../core/events.service';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { CartService } from '../../core/cart.service';
 
 @Component({
   selector: 'app-event-details',
@@ -44,6 +45,7 @@ import { RouterLink } from '@angular/router';
             </div>
 
             <button
+              (click)="addTicket()"
               class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 shadow-lg transition"
             >
               Buy Tickets
@@ -58,6 +60,11 @@ export class EventDetails {
   // TODO Mod 3:
   readonly id = input.required<string>();
   readonly eventsService = inject(EventsService);
+  readonly cartService = inject(CartService);
 
   readonly eventResource = this.eventsService.getEventResource(this.id);
+
+  addTicket() {
+    this.cartService.addTicket(this.id());
+  }
 }

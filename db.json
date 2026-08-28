@@ -35,20 +35,28 @@
       "speakers": [
         "Jessica Janiuk"
       ]
-    },
-    {
-      "title": "dsfasfa",
-      "description": "dfafadfasdf",
-      "date": "2026-08-28T04:10",
-      "location": "dsfasdfasdf",
-      "speakers": [
-        "",
-        "cvzcvzcv",
-        "vvvzxcvzxcv"
-      ],
-      "image": "/images/event4.png",
-      "id": "uOvOou9"
     }
   ],
-  "tickets": []
+  "tickets": [
+    {
+      "eventId": "1",
+      "id": 1
+    },
+    {
+      "eventId": "1",
+      "id": 2
+    },
+    {
+      "eventId": "1",
+      "id": 3
+    },
+    {
+      "eventId": "1",
+      "id": 4
+    },
+    {
+      "eventId": "1",
+      "id": 5
+    }
+  ]
 }
