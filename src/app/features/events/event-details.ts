@@ -131,6 +131,8 @@ export class EventDetails {
 
   readonly eventResource = this.eventsService.getEventResource(this.id);
 
+  constructor() {}
+
   // private buyBtnClick$ = new Subject<void>();
 
   addToCart() {

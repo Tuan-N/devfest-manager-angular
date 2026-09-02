@@ -12,17 +12,6 @@ export class EventsService {
   // Construct the events API URL
   private apiUrl = `${inject(API_URL)}/events`;
 
-  // 1. Define the Resource Factory
-  // We accept a Signal<string> so the resource can react to changes automatically.
-  getEventsResource(query: Signal<string>) {
-    return httpResource<DevFestEvent[]>(() => {
-      const q = query();
-      // The function returns the URL to fetch.
-      // Whenever 'q' changes, httpResource re-fetches automatically.
-      return q ? `${this.apiUrl}?q=${q}` : this.apiUrl;
-    });
-  }
-
   getEventResource(id: Signal<string>) {
     return httpResource<DevFestEvent>(() => {
       const eventId = id();
@@ -31,12 +20,6 @@ export class EventsService {
 
       return `${this.apiUrl}/${eventId}`;
     });
-  }
-
-  // 2. Delete an event
-  // We return an Observable (classic pattern) for the component to subscribe to.
-  deleteEvent(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   createEvent(event: Omit<DevFestEvent, 'id'>): Observable<DevFestEvent> {

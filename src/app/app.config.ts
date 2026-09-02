@@ -1,8 +1,9 @@
 import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
 import { API_URL } from './core/tokens';
+import { loadingInterceptor } from './core/loading.interceptor';
 import { environment } from '../environments/environment';
 import { IMAGE_LOADER, ImageLoaderConfig } from '@angular/common';
 import {
@@ -18,7 +19,7 @@ export const appConfig: ApplicationConfig = {
 
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
 
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([loadingInterceptor])),
     { provide: API_URL, useValue: environment.apiUrl },
     // {
     //   provide: IMAGE_LOADER,

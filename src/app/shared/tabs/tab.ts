@@ -1,8 +1,9 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { TabState } from './tab-state';
 
 @Component({
   selector: 'app-tab',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <!-- Only render content if active -->
     @if (isActive()) {

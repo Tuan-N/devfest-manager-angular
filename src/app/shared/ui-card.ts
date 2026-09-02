@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-ui-card',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div
       class="bg-white rounded-lg shadow-md overflow-hidden transition-shadow duration-300 hover:shadow-xl h-full flex flex-col"

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { form, FormField, required, minLength, disabled, debounce } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { EventsService } from '../../core/events.service';

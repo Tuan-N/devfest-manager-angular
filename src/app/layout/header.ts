@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CartService } from '../core/cart.service';
 
 @Component({
   selector: 'app-header',
   imports: [RouterLink, RouterLinkActive],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <header class="bg-blue-700 text-white shadow-md">
       <div class="container mx-auto px-4 py-4 flex justify-between items-center">

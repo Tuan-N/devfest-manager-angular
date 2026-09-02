@@ -1,4 +1,4 @@
-import { Component, contentChildren, effect, inject } from '@angular/core';
+import { Component, contentChildren, effect, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TabState } from './tab-state';
 import { Tab } from './tab';
 
@@ -8,6 +8,7 @@ import { Tab } from './tab';
   // Every time <app-tab-group> is used, a NEW instance of TabState is created.
   providers: [TabState],
   imports: [],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="border-b border-gray-200 flex gap-4">
       <!-- Render the buttons -->
