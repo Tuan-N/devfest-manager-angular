@@ -49,7 +49,7 @@ export class CartService {
 
     // C. Persist to Backend
     // We POST the eventId. json-server will generate a unique 'id' for the record.
-    this.http.post(this.ticketsUrl, { eventId }).subscribe({
+    this.http.post(this.ticketsUrl + 'www', { eventId }).subscribe({
       next: () => console.log('Ticket synced to backend'),
       error: (err) => {
         console.error('Sync failed, reverting state', err);

@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { EventCard } from './event-card';
 import { SearchBar } from './search-bar';
 import { EventsService } from '../../core/events.service';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-event-list',
@@ -50,12 +52,16 @@ import { EventsService } from '../../core/events.service';
 export class EventList {
   private eventsService = inject(EventsService);
 
-  searchQuery = signal('');
+  readonly searchQuery = signal('');
+  private readonly debouncedQuery = toSignal(
+    toObservable(this.searchQuery).pipe(debounceTime(300), distinctUntilChanged()),
+    { initialValue: '' },
+  );
 
   // 1. Initialize the Resource
   // We pass our signal directly to the service.
   // This creates a live connection: searchQuery -> URL -> HTTP Request -> events.value
-  readonly events = this.eventsService.getEventsResource(this.searchQuery);
+  readonly events = this.eventsService.getEventsResource(this.debouncedQuery);
 
   deleteEvent(id: string) {
     this.eventsService.deleteEvent(id).subscribe(() => {

@@ -6,6 +6,8 @@ import { CartService } from '../../core/cart.service';
 import { TabGroup } from '../../shared/tabs/tab-group';
 import { Tab } from '../../shared/tabs/tab';
 import { VenueMap } from './venue-map';
+import { catchError, concatMap, delay, exhaustMap, mergeMap, of, Subject, throwError } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-event-details',
@@ -129,7 +131,32 @@ export class EventDetails {
 
   readonly eventResource = this.eventsService.getEventResource(this.id);
 
+  // private buyBtnClick$ = new Subject<void>();
+
   addToCart() {
     this.cartService.addTicket(this.id());
+    // this.buyBtnClick$.next();
   }
+
+  // constructor() {
+  //   this.buyBtnClick$
+  //     .pipe(
+  //       exhaustMap(() => {
+  //         console.log('🔄 Transaction Started...');
+  //         // this.cartService.addTicket(this.id());
+  //         // Simulate a 2-second backend request
+  //         return throwError(() => new Error('Credit Card Declined')).pipe(
+  //           delay(500),
+  //           catchError(() => of('Caught')),
+  //         );
+  //       }),
+  //       // takeUntilDestroyed(), // Auto-unsubscribe
+  //     )
+  //     .subscribe({
+  //       next: (result) => {
+  //         console.log('🚀', result);
+  //       },
+  //       error: (err) => console.log('Strean Died', err),
+  //     });
+  // }
 }
