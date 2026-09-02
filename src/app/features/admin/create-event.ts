@@ -58,7 +58,11 @@ interface CreateEventForm extends Omit<DevFestEvent, 'id'> {}
           </div>
           <div>
             <label>Location</label>
-            <input [formField]="form.location" type="text" class="w-full px-4 py-2 border rounded-md" />
+            <input
+              [formField]="form.location"
+              type="text"
+              class="w-full px-4 py-2 border rounded-md"
+            />
           </div>
         </div>
 
