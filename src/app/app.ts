@@ -2,13 +2,15 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Header } from './layout/header';
 import { LoadingIndicator } from './shared/loading-indicator';
+import { NotifyToast } from './shared/notify-toast';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, LoadingIndicator],
+  imports: [RouterOutlet, Header, LoadingIndicator, NotifyToast],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-loading-indicator />
+    <app-notify-toast />
     <div class="min-h-screen bg-gray-50 flex flex-col">
       <app-header />
       <main class="flex-grow container mx-auto px-4 py-8">

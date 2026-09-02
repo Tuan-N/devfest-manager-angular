@@ -1,7 +1,8 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { form, FormField, required, minLength, disabled, debounce } from '@angular/forms/signals';
 import { Router } from '@angular/router';
-import { EventsService } from '../../core/events.service';
+import { EventsEntityStore } from '../../core/events-entity.store';
+import { EventsDataService } from '../../core/events-data.service';
 import { DevFestEvent } from '../../models/event.model';
 
 interface CreateEventForm extends Omit<DevFestEvent, 'id'> {}
@@ -9,6 +10,9 @@ interface CreateEventForm extends Omit<DevFestEvent, 'id'> {}
 @Component({
   selector: 'app-create-event',
   imports: [FormField],
+  // Page-scoped store: a fresh instance is created for this component and
+  // destroyed with it, mirroring EventList's usage of EventsEntityStore.
+  providers: [EventsEntityStore, EventsDataService],
   template: `
     <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow">
       <h2 class="text-2xl font-bold mb-6 text-gray-800">Create New Event</h2>
@@ -116,7 +120,7 @@ interface CreateEventForm extends Omit<DevFestEvent, 'id'> {}
   `,
 })
 export class CreateEvent {
-  private readonly eventsService = inject(EventsService);
+  private readonly eventsStore = inject(EventsEntityStore);
   private readonly router = inject(Router);
 
   // 2. The Source of Truth
@@ -168,7 +172,7 @@ export class CreateEvent {
     }));
   }
 
-  onSubmit(event: SubmitEvent) {
+  async onSubmit(event: SubmitEvent) {
     // Prevent default form submission
     event.preventDefault();
     // 1. Check form-level validity signal
@@ -177,13 +181,13 @@ export class CreateEvent {
     // 2. Read the Source Signal directly
     const payload = this.eventData();
 
-    // 3. Send to service
-    this.eventsService.createEvent(payload).subscribe({
-      next: () => {
-        alert('Event Created!');
-        this.router.navigate(['/']);
-      },
-      error: (err) => console.error(err),
-    });
+    // 3. Send to the store; the server assigns the id.
+    try {
+      await this.eventsStore.create(payload as unknown as DevFestEvent);
+      alert('Event Created!');
+      this.router.navigate(['/']);
+    } catch (err) {
+      console.error(err);
+    }
   }
 }

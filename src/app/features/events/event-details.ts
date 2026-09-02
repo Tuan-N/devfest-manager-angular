@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { EventsService } from '../../core/events.service';
+import { ChangeDetectionStrategy, Component, effect, inject, input } from '@angular/core';
+import { EventsEntityStore } from '../../core/events-entity.store';
+import { EventsDataService } from '../../core/events-data.service';
 import { CommonModule, DatePipe, NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../core/cart.service';
@@ -8,10 +9,14 @@ import { Tab } from '../../shared/tabs/tab';
 import { VenueMap } from './venue-map';
 import { catchError, concatMap, delay, exhaustMap, mergeMap, of, Subject, throwError } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CartStore } from '../../core/cart.store';
 
 @Component({
   selector: 'app-event-details',
   imports: [CommonModule, RouterLink, DatePipe, NgOptimizedImage, TabGroup, Tab, VenueMap],
+  // Page-scoped store: a fresh instance is created for this component and
+  // destroyed with it, mirroring EventList's usage of EventsEntityStore.
+  providers: [EventsEntityStore, EventsDataService],
   template: `
     <div class="bg-white rounded-xl shadow-lg p-8 max-w-4xl mx-auto min-h-[600px]">
       <!-- Back Button -->
@@ -19,21 +24,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         ← Back to Events
       </a>
 
-      <!-- Loading State -->
-      @if (eventResource.isLoading()) {
-        <div class="animate-pulse h-64 bg-gray-100 rounded-lg"></div>
-      }
-
       <!-- Error State -->
-      @if (eventResource.error()) {
+      @if (store.error()) {
         <div class="text-red-600 p-4 bg-red-50 rounded">Event not found.</div>
       }
 
-      <!-- Success State -->
-      <!-- Always check hasValue() before accessing value() -->
-      @if (eventResource.hasValue()) {
-        @let event = eventResource.value()!;
-
+      <!-- Loading State -->
+      @if (store.loading()) {
+        <div class="animate-pulse h-64 bg-gray-100 rounded-lg"></div>
+      } @else if (store.current(); as event) {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <!-- Left: Content -->
           <div class="md:col-span-2 space-y-4">
@@ -124,19 +123,24 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   `,
 })
 export class EventDetails {
-  private readonly eventsService = inject(EventsService);
+  protected readonly store = inject(EventsEntityStore);
   private readonly cartService = inject(CartService);
+  readonly cartStore = inject(CartStore);
 
   readonly id = input.required<string>();
 
-  readonly eventResource = this.eventsService.getEventResource(this.id);
-
-  constructor() {}
+  constructor() {
+    effect(() => {
+      // load() re-throws after recording the failure in store.error(); the
+      // error is already reflected in state, so there's nothing more to do.
+      this.store.loadById(this.id()).catch(() => {});
+    });
+  }
 
   // private buyBtnClick$ = new Subject<void>();
 
   addToCart() {
-    this.cartService.addTicket(this.id());
+    this.cartStore.addToCart({ eventId: this.id() });
     // this.buyBtnClick$.next();
   }
 

@@ -1,4 +1,11 @@
-import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+import {
+  patchState,
+  signalStore,
+  withComputed,
+  withHooks,
+  withMethods,
+  withState,
+} from '@ngrx/signals';
 import {
   setError,
   setFulfilled,
@@ -31,7 +38,7 @@ export const CartStore = signalStore(
     const ticketsUrl = inject(TICKETS_URL);
 
     return {
-      load: rxMethod<void>(
+      _load: rxMethod<void>(
         pipe(
           tap(() => {
             patchState(store, setPending());
@@ -78,5 +85,10 @@ export const CartStore = signalStore(
         }),
       ),
     };
+  }),
+  withHooks({
+    onInit(store) {
+      store._load();
+    },
   }),
 );

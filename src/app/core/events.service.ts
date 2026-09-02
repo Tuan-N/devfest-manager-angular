@@ -1,8 +1,9 @@
 import { Injectable, inject, Signal } from '@angular/core';
-import { HttpClient, httpResource } from '@angular/common/http';
+import { HttpClient, HttpContext, httpResource } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { DevFestEvent } from '../models/event.model';
 import { API_URL } from './tokens';
+import { SKIP_NOTIFY } from './notify.interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,11 @@ export class EventsService {
       // If no ID (or routing transition), don't fetch yet
       if (!eventId) return undefined;
 
-      return `${this.apiUrl}/${eventId}`;
+      return {
+        url: `${this.apiUrl}/${eventId}`,
+        // EventDetails already renders its own "Event not found" error state.
+        context: new HttpContext().set(SKIP_NOTIFY, true),
+      };
     });
   }
 

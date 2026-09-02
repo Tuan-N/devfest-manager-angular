@@ -4,6 +4,7 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { routes } from './app.routes';
 import { API_URL } from './core/tokens';
 import { loadingInterceptor } from './core/loading.interceptor';
+import { notifyInterceptor } from './core/notify.interceptor';
 import { environment } from '../environments/environment';
 import { IMAGE_LOADER, ImageLoaderConfig } from '@angular/common';
 import {
@@ -14,12 +15,11 @@ import {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // Day 1: Zone.js enabled. Day 2: switch to provideZonelessChangeDetection()
     provideZonelessChangeDetection(),
 
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
 
-    provideHttpClient(withFetch(), withInterceptors([loadingInterceptor])),
+    provideHttpClient(withInterceptors([loadingInterceptor, notifyInterceptor])),
     { provide: API_URL, useValue: environment.apiUrl },
     // {
     //   provide: IMAGE_LOADER,
@@ -29,6 +29,6 @@ export const appConfig: ApplicationConfig = {
     //     return `https://static-assets.dev/cdn-cgi/image/width=${config.width},format=auto/https://storage.googleapis.com/images-cdn-e0395.firebasestorage.app/${src}`;
     //   },
     // },
-    provideClientHydration(withIncrementalHydration()),
+    provideClientHydration(),
   ],
 };

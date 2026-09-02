@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import type { DataService } from '@ngrx-toolkit/core';
 import { DevFestEvent } from '../models/event.model';
 import { API_URL } from './tokens';
+import { SKIP_NOTIFY } from './notify.interceptor';
 
 export interface EventFilter extends Record<string, unknown> {
   q: string;
@@ -21,7 +22,11 @@ export class EventsDataService implements DataService<DevFestEvent, EventFilter>
 
   load(filter: EventFilter): Promise<DevFestEvent[]> {
     const url = filter.q ? `${this.apiUrl}?q=${filter.q}` : this.apiUrl;
-    return firstValueFrom(this.http.get<DevFestEvent[]>(url));
+    return firstValueFrom(
+      this.http.get<DevFestEvent[]>(url, {
+        context: new HttpContext().set(SKIP_NOTIFY, true),
+      }),
+    );
   }
 
   loadById(id: string): Promise<DevFestEvent> {
