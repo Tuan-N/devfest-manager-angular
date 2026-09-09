@@ -3,7 +3,6 @@ import { TabState } from './tab-state';
 
 @Component({
   selector: 'app-tab',
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <!-- Only render content if active -->
     @if (isActive()) {

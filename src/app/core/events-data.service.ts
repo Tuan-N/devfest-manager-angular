@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpContext } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import type { DataService } from '@ngrx-toolkit/core';
 import { DevFestEvent } from '../models/event.model';
@@ -21,9 +21,13 @@ export class EventsDataService implements DataService<DevFestEvent, EventFilter>
   private readonly apiUrl = `${inject(API_URL)}/events`;
 
   load(filter: EventFilter): Promise<DevFestEvent[]> {
-    const url = filter.q ? `${this.apiUrl}?q=${filter.q}` : this.apiUrl;
+    let params = new HttpParams();
+    if (filter.q) {
+      params = params.set('q', filter.q);
+    }
     return firstValueFrom(
-      this.http.get<DevFestEvent[]>(url, {
+      this.http.get<DevFestEvent[]>(this.apiUrl, {
+        params,
         context: new HttpContext().set(SKIP_NOTIFY, true),
       }),
     );
